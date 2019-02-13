@@ -15,6 +15,8 @@ if(!defined('ABSPATH')){
 	exit('Go away!');
 }
 
+
+
 // Create custom 'logs' posttype
 class LoggingPosttype {
 	private $labels;
@@ -50,3 +52,20 @@ $labels = array(
 );
 
 $posttype = new LoggingPosttype($labels);
+
+
+
+// Create log on every login
+add_action('wp_login', __NAMESPACE__.'\create_user_log_entry', 10, 2);
+
+function create_user_log_entry($user_login,$user){
+
+  $login_args = array(
+    'post_type'   => 'logs',
+    'post_title'  => 'Login By ' . $user_login . ' at ' . Date('H:i:s d/m/Y'),
+    'post_status' => 'private'
+  );
+
+  $post_id = wp_insert_post($login_args);
+
+}
